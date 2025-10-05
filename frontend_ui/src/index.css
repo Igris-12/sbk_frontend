@@ -1,0 +1,74 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* --- 1. THEME & COLOR PALETTE --- */
+:root {
+  --primary-bg: #1e293b; /* slate-800 */
+  --primary-accent: #14b8a6; /* teal-400 */
+  --text-main: #f8fafc; /* slate-100 */
+}
+
+/* --- 2. NEW GRADIENT & IMAGE BACKGROUND --- */
+body {
+  margin: 0;
+  padding: 0;
+  color: var(--color-text-light);
+  font-family: 'Inter', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+
+  /* --- BACKGROUND STYLES --- */
+  /* The gradient is the base layer (last in the list) */
+  background: linear-gradient(180deg, var(--color-dark-space) 0%, var(--color-space-blue) 100%);
+
+  /* CHOOSE ONE of the following background-image lines and uncomment it.
+    The image will be layered ON TOP of the gradient.
+  */
+
+  /* Option A: Use your local 'background.png' file */
+  /* background-image: url('./assets/background.png'); */
+
+  /* Option B: Use an image from online (replace URL with your choice) */
+  background-image: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071&auto=format&fit=crop');
+
+  /* Option C: If you want NO image and ONLY the gradient, delete/comment out the line above. */
+
+
+  /* --- These properties control the background image --- */
+  background-size: cover; /* Makes the image cover the entire screen */
+  background-position: center center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents the image from repeating */
+  background-attachment: fixed; /* Creates a cool parallax scrolling effect */
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Other styles remain the same... */
+h1, h2, h3 {
+  font-family: 'Space Mono', monospace;
+  text-shadow: 0 0 8px rgba(20, 184, 166, 0.3);
+}
+
+/* NOTE: The old animated star background is no longer needed with this new approach. */
+/* You can safely delete the .animated-space-background and .stars CSS rules. */
+
+/* --- Themed Scrollbar --- */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-space-blue);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-star-cyan);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-nebula-purple);
+}
