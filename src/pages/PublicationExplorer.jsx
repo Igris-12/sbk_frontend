@@ -4,7 +4,7 @@ import axios from 'axios';
 import plant1 from '../assets/plant-1.png';
 import plant2 from '../assets/plant-2.png';
 
-const NODE_SERVER_URL = 'http://localhost:3000';
+const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app';
 
 const Tag = ({ text, active }) => (
   <button className={`px-3 py-1 text-xs rounded-md font-medium ${

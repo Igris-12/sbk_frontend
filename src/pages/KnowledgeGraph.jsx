@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import * as d3 from 'd3';
 
-const NODE_SERVER_URL = 'http://localhost:3000';
+const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app';
 
 const KnowledgeGraph = () => {
   const { topic } = useParams();

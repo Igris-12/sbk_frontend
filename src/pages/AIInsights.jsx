@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { FiTrendingUp, FiAlertCircle, FiZap, FiTarget, FiRefreshCw } from 'react-icons/fi';
 
-const NODE_SERVER_URL = 'http://localhost:3000';
+const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app';
 
 const InsightCard = ({ icon: Icon, title, content, isLoading, color }) => (
   <div className={`bg-slate-800/50 p-6 rounded-xl border border-slate-700 shadow-xl hover:shadow-${color}-400/10 transition-all duration-300`}>

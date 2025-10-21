@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { FiSend, FiArrowLeft, FiCalendar, FiUsers, FiExternalLink } from 'react-icons/fi';
 import axios from 'axios'; 
 
-const NODE_SERVER_URL = 'http://localhost:3000'; 
+const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app'; 
 
 const Dashboard = () => {
   const { topic } = useParams();
