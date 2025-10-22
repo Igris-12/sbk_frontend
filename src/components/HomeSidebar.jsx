@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FiHome, FiSearch, FiGitBranch, FiZap, FiSettings, FiHelpCircle, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiSearch, FiGitBranch, FiZap, FiSettings, FiHelpCircle } from 'react-icons/fi';
 
 const SidebarItem = ({ icon, text, to }) => {
   const location = useLocation();
@@ -10,34 +10,34 @@ const SidebarItem = ({ icon, text, to }) => {
     <Link
       to={to}
       className={`
-        flex items-center gap-3 px-5 py-3 rounded-lg transition-all duration-300
+        flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
         ${isActive 
-          ? 'bg-teal-400/20 text-teal-400 border border-teal-400/50 shadow-lg shadow-teal-400/20' 
-          : 'text-slate-300 hover:bg-slate-800/70 hover:text-teal-400 border border-transparent'
+          ? 'bg-gradient-to-r from-cyan-500/20 to-blue-600/20 text-cyan-400 border border-cyan-500/30 shadow-lg shadow-cyan-500/10' 
+          : 'text-slate-300 hover:bg-slate-800/70 hover:text-cyan-400 border border-transparent'
         }
         group relative overflow-hidden
       `}
     >
-      <div className="absolute inset-0 bg-gradient-to-r from-teal-400/0 via-teal-400/5 to-teal-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-400/5 to-cyan-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       <div className={`relative z-10 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
         {icon}
       </div>
-      <span className="relative z-10 font-medium">{text}</span>
+      <span className="relative z-10 font-medium text-sm">{text}</span>
       {isActive && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-teal-400 rounded-r-full" />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-cyan-400 rounded-r-full" />
       )}
     </Link>
   );
 };
 
 const HomeSidebar = () => (
-  <aside className="h-full bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950 border-r border-slate-700/50 shadow-2xl relative overflow-hidden flex flex-col">
-    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-teal-900/10 via-transparent to-transparent" />
+  <aside className="hidden lg:block w-64 h-full bg-slate-950/90 backdrop-blur-xl border-r border-cyan-500/20 shadow-2xl relative overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-b from-cyan-900/5 via-transparent to-blue-900/5 pointer-events-none" />
     
-    <div className="relative z-10 p-5 flex-1 flex flex-col">
+    <div className="relative z-10 p-6 flex flex-col h-full">
       {/* Header */}
-      <div className="mb-8 pb-6 border-b border-slate-700/50">
-        <h2 className="text-xl font-bold text-teal-400 tracking-wide">
+      <div className="mb-8 pb-6 border-b border-cyan-500/20">
+        <h2 className="text-xl font-bold text-cyan-400 tracking-wide">
           Navigation
         </h2>
         <p className="text-xs text-slate-500 mt-1">Explore NASA Bioscience</p>
@@ -52,20 +52,20 @@ const HomeSidebar = () => (
       </nav>
       
       {/* Bottom Section */}
-      <div className="mt-auto pt-6 border-t border-slate-700/50 space-y-2">
-        {/* Quick Stats or Info Card */}
-        <div className="bg-slate-800/50 border border-slate-700/50 rounded-lg p-4 mb-4">
+      <div className="mt-auto pt-6 border-t border-cyan-500/20 space-y-4">
+        {/* Quick Stats Card */}
+        <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm border border-cyan-500/20 rounded-xl p-4 shadow-lg">
           <p className="text-xs text-slate-400 mb-2">Research Papers</p>
-          <p className="text-2xl font-bold text-teal-400">1,234</p>
+          <p className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">1,234</p>
           <p className="text-xs text-slate-500 mt-1">Total publications</p>
         </div>
         
         {/* Settings & Help */}
-        <Link to="/settings" className="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-teal-400 transition-colors">
+        <Link to="/settings" className="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-slate-800/50">
           <FiSettings size={18} />
           <span className="text-sm">Settings</span>
         </Link>
-        <Link to="/help" className="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-teal-400 transition-colors">
+        <Link to="/help" className="flex items-center gap-3 px-4 py-2 text-slate-400 hover:text-cyan-400 transition-colors rounded-lg hover:bg-slate-800/50">
           <FiHelpCircle size={18} />
           <span className="text-sm">Help & Support</span>
         </Link>

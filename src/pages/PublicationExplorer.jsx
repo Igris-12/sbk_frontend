@@ -1,23 +1,15 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
+import { FiArrowLeft, FiZap, FiCalendar, FiUsers, FiTrendingUp, FiBook, FiAward, FiFileText } from 'react-icons/fi';
 import axios from 'axios';
 import plant1 from '../assets/plant-1.png';
 import plant2 from '../assets/plant-2.png';
 
-const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app';
-
-const Tag = ({ text, active }) => (
-  <button className={`px-3 py-1 text-xs rounded-md font-medium ${
-    active 
-       ? 'bg-teal-400 text-slate-900' 
-       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-  }`}>
-    {text}
-  </button>
-);
+const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app' || 'http://localhost:3000';
 
 const PublicationsExplorer = () => {
   const { topic } = useParams();
+  const navigate = useNavigate();
   
   const readableTopic = topic ? 
       topic.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) :
@@ -96,7 +88,7 @@ const PublicationsExplorer = () => {
       });
   }, [topic, fetchGeminiResponse, readableTopic]);
 
-  // Fetch brief AI Summary for right panel
+  // Fetch brief AI Summary
   useEffect(() => {
     if (!topic) {
       setAiSummary("No topic selected.");
@@ -140,7 +132,6 @@ Keep it extremely concise.`;
       img.onload = () => resolve(true);
       img.onerror = () => resolve(false);
       img.src = url;
-      // Timeout after 5 seconds
       setTimeout(() => resolve(false), 5000);
     });
   };
@@ -178,11 +169,9 @@ Keep it extremely concise.`;
         console.log('📥 Raw Gemini response:', response);
         
         try {
-          // Try to extract JSON from response
           let jsonMatch = response.match(/\[[\s\S]*\]/);
           
           if (!jsonMatch) {
-            // Try to find JSON even if wrapped in markdown code blocks
             const codeBlockMatch = response.match(/```(?:json)?\s*(\[[\s\S]*\])\s*```/);
             if (codeBlockMatch) {
               jsonMatch = [codeBlockMatch[1]];
@@ -194,7 +183,6 @@ Keep it extremely concise.`;
             console.log('✅ Parsed image data:', parsedData);
             
             if (parsedData.length >= 2) {
-              // Validate both URLs
               const url1Valid = await validateImageUrl(parsedData[0].url);
               const url2Valid = await validateImageUrl(parsedData[1].url);
               
@@ -251,130 +239,256 @@ Keep it extremely concise.`;
   };
 
   return (
-    <div className="flex-1 bg-slate-900 p-6"> 
-      <h2 className="text-3xl font-bold text-slate-100 mb-4 border-b border-teal-400 pb-2">
-          Publications Explorer: {readableTopic}
-      </h2>
+    <div className="min-h-screen">
+      {/* Back Button */}
+      <div className="mb-6">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 bg-slate-800/50 backdrop-blur-xl text-slate-100 font-medium py-3 px-6 rounded-xl hover:bg-slate-700/50 transition-all border border-cyan-500/20 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-500/20"
+        >
+          <FiArrowLeft size={20} /> Back to Home
+        </button>
+      </div>
 
+      {/* Header */}
+      <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 p-6 sm:p-8 lg:p-10 rounded-3xl shadow-2xl shadow-cyan-500/10 mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/30 rounded-full text-cyan-400 text-sm mb-4">
+          <FiBook size={16} />
+          <span>Publications Explorer</span>
+        </div>
+        
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white mb-4 leading-tight">
+          {readableTopic}
+        </h1>
+        
+        <p className="text-slate-400 text-base sm:text-lg">
+          Explore recent research publications and their impact on space biology
+        </p>
+      </div>
+
+      {/* Error Display */}
       {error && (
-        <div className="p-3 mb-4 bg-red-900 border border-red-500 rounded-lg text-red-300">
-          **API Error:** {error}
+        <div className="p-4 mb-6 bg-red-900/50 backdrop-blur-xl border border-red-500/50 rounded-2xl text-red-300">
+          <strong>API Error:</strong> {error}
         </div>
       )}
-      
 
-      <div className="grid grid-cols-12 gap-6">
-        {/* Left Section: Keywords and Table */}
-        <div className="col-span-4">
-          
-          <div className="bg-slate-800/50 rounded-lg p-2 border border-slate-700 shadow-xl"> 
-            {isTableLoading ? (
-              <div className="text-center py-8 text-slate-400">Loading publications...</div>
-            ) : (
-              <table className="w-full text-left text-sm text-slate-300">
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        
+        {/* Publications Table */}
+        <div className="lg:col-span-2 bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-cyan-500/10">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-gradient-to-br from-cyan-500/20 to-blue-600/20 rounded-xl border border-cyan-500/30">
+              <FiBook className="text-cyan-400" size={24} />
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-cyan-400">Recent Publications</h2>
+          </div>
+
+          {isTableLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-cyan-400 mb-4"></div>
+              <p className="text-slate-400 text-lg">Loading publications...</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="text-slate-400 border-b border-slate-700">
-                    {tableData.length > 0 && Object.keys(tableData[0]).map(key => (
-                      <th key={key} className="p-2 font-normal">{key}</th>
-                    ))}
+                  <tr className="border-b-2 border-cyan-500/30">
+                    <th className="p-3 text-cyan-400 font-semibold">Year</th>
+                    <th className="p-3 text-cyan-400 font-semibold">Author</th>
+                    <th className="p-3 text-cyan-400 font-semibold hidden sm:table-cell">Mission</th>
+                    <th className="p-3 text-cyan-400 font-semibold">Impact</th>
+                    <th className="p-3 text-cyan-400 font-semibold hidden md:table-cell">Species</th>
+                    <th className="p-3 text-cyan-400 font-semibold">Citations</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {tableData.map((row, i) => ( 
-                    <tr key={i} className="hover:bg-slate-700/50 transition-colors"> 
-                      {Object.values(row).map((val, j) => (
-                        <td key={j} className="p-2">{val}</td>
-                      ))}
+                  {tableData.map((row, i) => (
+                    <tr 
+                      key={i} 
+                      className="border-b border-slate-700/50 hover:bg-slate-800/30 transition-colors"
+                    >
+                      <td className="p-3 text-slate-300 font-medium">{row.year}</td>
+                      <td className="p-3 text-slate-300">{row.author}</td>
+                      <td className="p-3 text-slate-400 hidden sm:table-cell">{row.mission}</td>
+                      <td className="p-3">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">
+                          <FiTrendingUp size={12} />
+                          {row.impact}
+                        </span>
+                      </td>
+                      <td className="p-3 text-slate-400 hidden md:table-cell">{row.species}</td>
+                      <td className="p-3">
+                        <span className="inline-flex items-center gap-1 px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded-full text-xs font-medium">
+                          <FiAward size={12} />
+                          {row.citations}
+                        </span>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
-        {/* Middle Section: Image Cards */}
-        <div className="col-span-4 flex flex-col gap-6">
-          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 flex-1 shadow-xl"> 
-            {isImageLoading ? (
-              <div className="rounded-md w-full h-40 bg-slate-700 animate-pulse flex items-center justify-center">
-                <span className="text-slate-500 text-sm">Loading image...</span>
-              </div>
-            ) : (
-              <>
-                <img 
-                  src={imageUrl1} 
-                  className="rounded-md w-full h-40 object-cover" 
-                  alt="Research Image 1"
-                  onError={(e) => { 
-                    console.warn('⚠️ Image 1 failed to load, using fallback');
-                    e.target.src = plant1; 
-                  }}
-                />
-                {imageUrl1 !== plant1 && (
-                  <div className="mt-1 text-xs text-teal-400">✓ Dynamic image loaded</div>
-                )}
-              </>
-            )}
-            <p className="text-xs text-slate-400 mt-2">{readableTopic} Research</p>
-            <p className="text-slate-100 font-semibold">Scientific Study</p>
+        {/* AI Summary Panel */}
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-cyan-500/10">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="p-3 bg-gradient-to-br from-green-500/20 to-emerald-600/20 rounded-xl border border-green-500/30">
+              <FiZap className="text-green-400" size={24} />
+            </div>
+            <h3 className="text-xl sm:text-2xl font-bold text-green-400">AI Insights</h3>
           </div>
-          <div className="bg-slate-800/50 p-4 rounded-lg border border-slate-700 flex-[2] shadow-xl"> 
-            <h3 className="text-base font-bold text-slate-100 mb-2">Arabidopsis Thaliana Growth in Lunar Regolith Simulant</h3>
-            
-            {detailedSummary ? (
-              <p className="text-sm text-slate-300 mb-4">{detailedSummary}</p>
-            ) : (
-              <p className="text-sm text-slate-400 mb-4">
-                Click AI Summarizer to generate a detailed analysis of this research publication...
-              </p>
-            )}
-            
-            <div className="flex items-center justify-between">
-              {isImageLoading ? (
-                <div className="w-10 h-10 rounded-full bg-slate-700 animate-pulse"></div>
-              ) : (
-                <div className="relative">
-                  <img 
-                    src={imageUrl2} 
-                    className="w-10 h-10 rounded-full object-cover border border-slate-700" 
-                    alt="Research Image 2"
-                    onError={(e) => { 
-                      console.warn('⚠️ Image 2 failed to load, using fallback');
-                      e.target.src = plant2; 
-                    }}
-                  />
-                  {imageUrl2 !== plant2 && (
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-teal-400 rounded-full border border-slate-800"></div>
-                  )}
+          
+          {isSummaryLoading ? (
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-green-400 mb-4"></div>
+              <p className="text-slate-400">Generating insights...</p>
+            </div>
+          ) : (
+            <div className="p-4 bg-slate-950/50 backdrop-blur-sm rounded-2xl border border-green-500/30 whitespace-pre-wrap">
+              <div className="text-slate-300 leading-relaxed text-sm">{aiSummary}</div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Image Cards Section */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Image Card 1 */}
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 p-6 rounded-3xl shadow-2xl shadow-cyan-500/10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-purple-400 text-xs mb-4">
+            <FiFileText size={14} />
+            <span>Research Visualization</span>
+          </div>
+          
+          {isImageLoading ? (
+            <div className="rounded-2xl w-full h-64 bg-slate-800/50 animate-pulse flex items-center justify-center border border-slate-700">
+              <span className="text-slate-500 text-sm">Loading image...</span>
+            </div>
+          ) : (
+            <>
+              <img 
+                src={imageUrl1} 
+                className="rounded-2xl w-full h-64 object-cover border border-slate-700/50 mb-4" 
+                alt="Research Image 1"
+                onError={(e) => { 
+                  console.warn('⚠️ Image 1 failed to load, using fallback');
+                  e.target.src = plant1; 
+                }}
+              />
+              {imageUrl1 !== plant1 && (
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-400">AI-Generated Image</span>
                 </div>
               )}
+            </>
+          )}
+          <p className="text-xs text-slate-400 mb-2">{readableTopic} Research</p>
+          <p className="text-slate-100 font-semibold text-lg">Scientific Study Visualization</p>
+        </div>
+
+        {/* Image Card 2 with Profile */}
+        <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 p-6 rounded-3xl shadow-2xl shadow-cyan-500/10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-purple-400 text-xs mb-4">
+            <FiUsers size={14} />
+            <span>Research Team</span>
+          </div>
+          
+          <div className="flex items-start gap-4 mb-4">
+            {isImageLoading ? (
+              <div className="w-16 h-16 rounded-full bg-slate-800/50 animate-pulse border border-slate-700"></div>
+            ) : (
+              <div className="relative">
+                <img 
+                  src={imageUrl2} 
+                  className="w-16 h-16 rounded-full object-cover border-2 border-cyan-500/30" 
+                  alt="Research Image 2"
+                  onError={(e) => { 
+                    console.warn('⚠️ Image 2 failed to load, using fallback');
+                    e.target.src = plant2; 
+                  }}
+                />
+                {imageUrl2 !== plant2 && (
+                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-slate-900"></div>
+                )}
+              </div>
+            )}
+            <div className="flex-1">
+              <p className="text-slate-100 font-semibold text-base">Research Profile</p>
+              <p className="text-xs text-slate-400">Space Biology Team</p>
+            </div>
+          </div>
+          
+          <div className="p-4 bg-slate-950/50 backdrop-blur-sm rounded-2xl border border-cyan-500/20">
+            <p className="text-sm text-slate-300 leading-relaxed">
+              Collaborative research initiative exploring the boundaries of space biology and its applications for future missions.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Featured Publication Card */}
+      <div className="bg-slate-900/50 backdrop-blur-xl border border-cyan-500/20 p-6 sm:p-8 rounded-3xl shadow-2xl shadow-cyan-500/10">
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="flex-1">
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-purple-500/10 border border-purple-500/30 rounded-full text-purple-400 text-xs mb-4">
+              <FiZap size={14} />
+              <span>Featured Study</span>
+            </div>
+            
+            <h3 className="text-xl sm:text-2xl font-bold text-white mb-4">
+              Arabidopsis Thaliana Growth in Lunar Regolith Simulant
+            </h3>
+            
+            {detailedSummary ? (
+              <div className="p-4 bg-slate-950/50 backdrop-blur-sm rounded-2xl border border-cyan-500/20 mb-4">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
+                  <strong className="text-cyan-400 text-sm uppercase tracking-wider">AI Analysis</strong>
+                </div>
+                <p className="text-slate-300 leading-relaxed">{detailedSummary}</p>
+              </div>
+            ) : (
+              <p className="text-slate-400 mb-4 leading-relaxed">
+                Click the AI Summarizer button to generate a comprehensive analysis of this groundbreaking research publication exploring plant growth in simulated lunar soil conditions...
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-4 items-center">
               <button 
                 onClick={handleAiSummarize}
                 disabled={isDetailedLoading}
-                className="bg-teal-400 text-slate-900 font-bold py-2 px-5 rounded-lg text-sm hover:bg-teal-300 transition-colors disabled:opacity-50"
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg hover:shadow-cyan-500/50 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
-                {isDetailedLoading ? 'Generating...' : 'AI Summarizer'}
+                {isDetailedLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    <span>Analyzing...</span>
+                  </>
+                ) : (
+                  <>
+                    <FiZap size={20} />
+                    <span>AI Summarizer</span>
+                  </>
+                )}
               </button>
+
+              <div className="flex items-center gap-3 text-slate-400 text-sm">
+                <div className="flex items-center gap-1">
+                  <FiCalendar size={16} />
+                  <span>2023</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <FiUsers size={16} />
+                  <span>Multi-Institution</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-        
-        {/* Right Section: AI Summary */}
-        <div className="col-span-4 bg-slate-800/50 p-6 rounded-lg border border-slate-700 shadow-xl"> 
-          <h3 className="text-lg font-bold text-slate-100 mb-2">
-            AI Summary: {readableTopic}
-          </h3>
-          
-          {isSummaryLoading ? (
-            <div className="text-center py-8 text-slate-400">
-              <div className="animate-pulse">Generating summary...</div>
-            </div>
-          ) : (
-            <div className="text-sm space-y-4 text-slate-300 whitespace-pre-wrap">
-              {aiSummary}
-            </div>
-          )}
         </div>
       </div>
     </div>

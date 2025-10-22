@@ -3,18 +3,18 @@ import { useParams } from "react-router-dom";
 import axios from 'axios';
 import { FiTrendingUp, FiAlertCircle, FiZap, FiTarget, FiRefreshCw } from 'react-icons/fi';
 
-const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app';
+const NODE_SERVER_URL = 'https://sbk-backend-chi.vercel.app' || 'http://localhost:3000';
 
 const InsightCard = ({ icon: Icon, title, content, isLoading, color }) => (
-  <div className={`bg-slate-800/50 p-6 rounded-xl border border-slate-700 shadow-xl hover:shadow-${color}-400/10 transition-all duration-300`}>
-    <div className="flex items-start gap-4 mb-3">
-      <div className={`p-3 rounded-lg bg-${color}-400/10 border border-${color}-400/30`}>
+  <div className={`bg-slate-900/50 backdrop-blur-xl p-6 rounded-2xl border border-cyan-500/20 shadow-xl hover:shadow-2xl hover:shadow-${color}-500/20 transition-all duration-300 hover:border-${color}-500/40`}>
+    <div className="flex items-start gap-4 mb-4">
+      <div className={`p-3 rounded-xl bg-gradient-to-br from-${color}-500/20 to-${color}-600/20 border border-${color}-500/30 group-hover:scale-110 transition-transform`}>
         <Icon className={`text-${color}-400`} size={24} />
       </div>
       <h3 className={`text-lg font-bold text-${color}-400 flex-1`}>{title}</h3>
     </div>
     {isLoading ? (
-      <div className="animate-pulse space-y-2">
+      <div className="animate-pulse space-y-3">
         <div className="h-3 bg-slate-700 rounded w-full"></div>
         <div className="h-3 bg-slate-700 rounded w-5/6"></div>
         <div className="h-3 bg-slate-700 rounded w-4/6"></div>
@@ -72,7 +72,6 @@ const AllInsights = () => {
     setIsLoading(true);
 
     try {
-      // Parallel API calls for better performance
       const [trendsRes, challengesRes, opportunitiesRes, recommendationsRes, analysisRes] = await Promise.all([
         fetchGeminiResponse(`Identify 3-4 key research trends in "${readableTopic}" for NASA space biology. Be specific and concise (3-4 sentences).`),
         fetchGeminiResponse(`List 3-4 major research challenges in "${readableTopic}" for space exploration. Be specific and concise (3-4 sentences).`),
@@ -106,34 +105,38 @@ const AllInsights = () => {
   }, [generateInsights]);
 
   return (
-    <div className="p-6 h-full flex flex-col bg-slate-950 text-slate-100 overflow-y-auto">
-      <div className="flex items-center justify-between mb-4 border-b border-teal-400 pb-2">
-        <h2 className="text-3xl font-bold text-slate-100">
-          AI Insights: {readableTopic}
-        </h2>
+    <div className="min-h-screen p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 pb-4 border-b border-cyan-500/20">
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-2">
+            AI Insights: <span className="text-cyan-400">{readableTopic}</span>
+          </h2>
+          <p className="text-slate-400 text-sm">AI-powered research analysis and strategic recommendations</p>
+        </div>
         <button
           onClick={generateInsights}
           disabled={isLoading}
-          className="flex items-center gap-2 bg-teal-400 text-slate-900 font-bold py-2 px-4 rounded-lg hover:bg-teal-300 transition-colors disabled:opacity-50"
+          className="mt-4 sm:mt-0 flex items-center gap-2 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold py-3 px-6 rounded-xl hover:shadow-lg hover:shadow-cyan-500/50 transition-all disabled:opacity-50 hover:scale-105"
         >
           <FiRefreshCw className={isLoading ? 'animate-spin' : ''} />
-          {isLoading ? 'Generating...' : 'Refresh'}
+          {isLoading ? 'Generating...' : 'Refresh Insights'}
         </button>
       </div>
 
       {error && (
-        <div className="p-3 mb-4 bg-red-900 border border-red-500 rounded-lg text-red-300">
-          **API Error:** {error}
+        <div className="p-4 mb-6 bg-red-900/50 backdrop-blur-xl border border-red-500/50 rounded-2xl text-red-300">
+          <strong>API Error:</strong> {error}
         </div>
       )}
 
       {/* Comprehensive Analysis Section */}
-      <div className="mb-6 bg-gradient-to-br from-slate-800/70 to-slate-800/40 p-6 rounded-xl border border-teal-400/30 shadow-2xl">
+      <div className="mb-8 bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-xl p-6 sm:p-8 rounded-3xl border border-cyan-500/30 shadow-2xl shadow-cyan-500/10">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-3 rounded-lg bg-teal-400/10 border border-teal-400/30">
-            <FiZap className="text-teal-400" size={28} />
+          <div className="p-3 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-cyan-500/30">
+            <FiZap className="text-cyan-400" size={28} />
           </div>
-          <h3 className="text-2xl font-bold text-teal-400">Comprehensive Analysis</h3>
+          <h3 className="text-2xl font-bold text-cyan-400">Comprehensive Analysis</h3>
         </div>
         {isLoading ? (
           <div className="animate-pulse space-y-3">
@@ -143,25 +146,25 @@ const AllInsights = () => {
             <div className="h-4 bg-slate-700 rounded w-4/6"></div>
           </div>
         ) : (
-          <p className="text-slate-200 leading-relaxed whitespace-pre-wrap">{insights.analysis}</p>
+          <p className="text-slate-200 leading-relaxed whitespace-pre-wrap text-sm sm:text-base">{insights.analysis}</p>
         )}
       </div>
 
       {/* Insights Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-8">
         <InsightCard
           icon={FiTrendingUp}
           title="Research Trends"
           content={insights.trends}
           isLoading={isLoading}
-          color="teal"
+          color="cyan"
         />
         <InsightCard
           icon={FiAlertCircle}
           title="Key Challenges"
           content={insights.challenges}
           isLoading={isLoading}
-          color="orange"
+          color="purple"
         />
         <InsightCard
           icon={FiZap}
@@ -180,7 +183,7 @@ const AllInsights = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="mt-8 p-4 bg-slate-800/30 rounded-lg border border-slate-700/50 text-center">
+      <div className="mt-8 p-4 bg-slate-900/50 backdrop-blur-xl rounded-2xl border border-cyan-500/20 text-center">
         <p className="text-xs text-slate-400">
           💡 AI-generated insights powered by Google Gemini • Last updated: {new Date().toLocaleString()}
         </p>
