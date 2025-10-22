@@ -9,8 +9,8 @@ import DashboardLayout from "./components/DashboardLayout.jsx";
 import ForgotPassword from "./pages/ForgotPassword.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import ChangePassword from "./pages/changePassword.jsx";
 import Verify from "./pages/Verify.jsx";
+import ChangePassword from "./pages/ChangePassword.jsx";
 
 export const router = createBrowserRouter([
   {
