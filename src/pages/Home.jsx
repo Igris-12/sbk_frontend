@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 import { FiBook, FiArrowRight, FiSearch, FiUsers, FiCalendar, FiTrendingUp } from "react-icons/fi";
 import { IoLeafOutline } from "react-icons/io5";
 import { FaMicroscope, FaRadiation, FaSatelliteDish, FaDna, FaRocket } from "react-icons/fa";
+import { MyContext } from "../AppLayout";
 
 // Animated particles background
 const AnimatedBackground = () => (
@@ -115,6 +116,8 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [stats, setStats] = useState({ totalArticles: 0, uniqueArticles: 0 });
   const [loading, setLoading] = useState(true);
+  const context = useContext(MyContext);
+  const history = useNavigate();
 
   const createSlug = (title) => {
     if (!title) return 'untitled';
@@ -127,6 +130,20 @@ const Home = () => {
   };
 
   const handleArticleClick = (article) => {
+    // Check if user is logged in
+    if (context.isLogin === false) {
+      // Store the article data and intended destination
+      const slug = createSlug(article.title);
+      sessionStorage.setItem('currentArticle', JSON.stringify(article));
+      sessionStorage.setItem('redirectAfterLogin', `/dashboard/${slug}`);
+
+      context.openAlertBox("error", "Need to Login for viewing articles");
+      setTimeout(() => {
+        navigate("/login");
+      }, 1500);
+      return;
+    }
+
     const slug = createSlug(article.title);
     sessionStorage.setItem('currentArticle', JSON.stringify(article));
     navigate(`/dashboard/${slug}`);
@@ -191,6 +208,7 @@ const Home = () => {
 
     setFilteredArticles(filtered);
   }, [searchTerm, articles]);
+
   const MetricCard = ({ icon, title, value, gradient, delay = 0, trend, subtitle }) => (
     <div
       className="relative bg-gradient-to-br from-slate-900/90 to-slate-800/90 backdrop-blur-xl border border-cyan-500/30 p-8 rounded-3xl hover:border-cyan-400/60 transition-all duration-500 group overflow-hidden shadow-2xl hover:shadow-cyan-500/25"
