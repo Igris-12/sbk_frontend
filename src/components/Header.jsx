@@ -88,7 +88,7 @@ const Header = () => {
               <div className="flex items-center gap-2 -mt-1">
                 <div className="h-px w-8 bg-gradient-to-r from-cyan-400/50 to-transparent"></div>
                 <p className="text-xs text-slate-400 group-hover:text-cyan-300 transition-colors font-medium tracking-wider">
-                  NASA Space Biology Knowledge Engine
+                  Space Biology Knowledge Engine
                 </p>
               </div>
             </div>
